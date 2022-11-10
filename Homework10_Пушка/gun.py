@@ -186,7 +186,7 @@ class Gun:
                 self.y -= 3
         elif keys[pygame.K_DOWN]:
             if self.y <= 500:
-                self.y +=3
+                self.y += 3
 
     def power_up(self):
         if self.f2_on:
@@ -202,15 +202,15 @@ class Target:
         self.screen = screen
         self.points = 0
         self.live = 1
-        self.vy = randint(-20, 20)
         # FIXME: don't work!!! How to call this functions when object is created?
         self.new_target()
 
     def new_target(self):
         """ Инициализация новой цели. """
         x = self.x = randint(600, 780)
-        y = self.y = randint(300, 550)
+        y = self.y = randint(50, 550)
         r = self.r = randint(20, 50)
+        self.vy = randint(-20, 20)
         color = self.color = RED
 
     def hit(self, points=1):
@@ -238,7 +238,9 @@ balls = []
 
 clock = pygame.time.Clock()
 gun = Gun(screen)
-target = Target()
+target1 = Target()
+target2 = Target()
+Targets = [target1, target2]
 counter = Counter()
 finished = False
 
@@ -246,7 +248,8 @@ while not finished:
     screen.fill(WHITE)
     gun.draw()
     gun.gunmovement()
-    target.draw()
+    for target in Targets:
+        target.draw()
     for b in balls:
         if b.live > 0:
             b.draw()
@@ -266,12 +269,14 @@ while not finished:
     for b in balls:
         if b.live > 0:
             b.move()
-            if b.hittest(target):
-                counter.penetration(b, target)
-                target.hit()
-                target.new_target()
-                b.ball_killer()
-    target.move()
+            for target in Targets:
+                if b.hittest(target):
+                    counter.penetration(b, target)
+                    target.hit()
+                    target.new_target()
+                    b.ball_killer()
+    for target in Targets:
+        target.move()
     gun.power_up()
 
 pygame.quit()
