@@ -21,7 +21,7 @@ WIDTH = 900
 HEIGHT = 700
 ball = 0
 face = 1
-
+projectiles = [ball, face]
 
 class Gravity:
     def __init__(self, fall_axeleration):
@@ -214,15 +214,19 @@ class Gun:
 
     def gunmovement(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_w]:
             if self.y >= 100:
                 self.y -= 3
-        elif keys[pygame.K_DOWN]:
+        elif keys[pygame.K_s]:
             if self.y <= 500:
                 self.y += 3
 
-
-
+    def bullet_changer(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_1]:
+            self.bullet_type = projectiles[0]
+        elif keys[pygame.K_2]:
+            self.bullet_type = projectiles[1]
     def power_up(self):
         if self.f2_on:
             if self.f2_power < 100:
@@ -283,6 +287,7 @@ while not finished:
     screen.fill(WHITE)
     gun.draw()
     gun.gunmovement()
+    gun.bullet_changer()
     for target in Targets:
         target.draw()
     for b in projectile:
