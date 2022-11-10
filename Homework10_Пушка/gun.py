@@ -23,7 +23,11 @@ ball = 0
 face = 1
 projectiles = [ball, face]
 
+
 class Gravity:
+    '''
+    don't need:)
+    '''
     def __init__(self, fall_axeleration):
         self.fall_axeleration = fall_axeleration
 
@@ -46,6 +50,9 @@ def distance(a1, a2):
 
 
 class Counter:
+    '''
+    counts number of hits of projectiles into targets
+    '''
     def __init__(self):
         self.__count = 0
 
@@ -54,7 +61,7 @@ class Counter:
             self.__count += 1
 
     def getter(self):
-        print("Che, interesno, skol'ko ballov???", "Malo, loh", sep = '\n')
+        print("Che, interesno, skol'ko ballov???", "Malo, loh", sep='\n')
         return self.__count
 
 
@@ -84,6 +91,7 @@ class Ball:
         и стен по краям окна (размер окна 800х600).
         """
         # FIXME
+
         if self.x >= 800 - self.r:
             self.vx = -0.8*self.vx
             self.x = 800 - self.r
@@ -109,13 +117,21 @@ class Ball:
             self.live -= 1
 
     def draw(self):
+        '''
+
+        :return: draws a ball
+        '''
         pygame.draw.circle(
             self.screen,
             self.color,
             (self.x, self.y),
             self.r
         )
+
     def ball_killer(self):
+        '''
+        sets ball's hp at -1, so it wouldn't appear further
+        '''
         self.live = -1
 
     def hittest(self, obj):
@@ -132,7 +148,11 @@ class Ball:
         # FIXME
             return False
 
+
 class Face(Ball):
+    '''
+    same as ball, but cutter
+    '''
     def draw(self):
         circle(screen, (255, 255, 0), (self.x, self.y), self.r)
         circle(screen, (0, 0, 0), (self.x - 0.5 * self.r, self.y - 0.3 * self.r), 0.3 * self.r)
@@ -141,7 +161,7 @@ class Face(Ball):
         circle(screen, (255, 255, 255), (self.x + 0.42 * self.r, self.y - 0.38 * self.r), 0.15 * self.r)
 
         def elbow(elbowx, elbowy, deltax, deltay):
-            line(screen, (0, 0, 0), (elbowx, elbowy), (elbowx + deltax, elbowy + deltay), 10)
+            line(screen, (0, 0, 0), (elbowx, elbowy), (elbowx + deltax, elbowy + deltay), 1)
 
         elbow(self.x - self.r, self.y - 0.3 * self.r, 0.5 * self.r, -0.5 * self.r)
         elbow(self.x + self.r, self.y - 0.3 * self.r, -0.5 * self.r, -0.5 * self.r)
@@ -153,13 +173,16 @@ class Face(Ball):
 
 
 class Gun:
+    '''
+    gun which can shoot projectiles and move
+    '''
     def __init__(self, screen):
         self.screen = screen
         self.f2_power = 10
         self.f2_on = 0
         self.an = 1
         self.color = GREY
-        self.bullet_type = face
+        self.bullet_type = ball
         self.y = 450
 
     def fire2_start(self, event):
@@ -196,7 +219,7 @@ class Gun:
     def targetting(self, event):
         """Прицеливание. Зависит от положения мыши."""
         if event:
-            if event.pos[0]-20 !=0:
+            if event.pos[0]-20 != 0:
                 self.an = math.atan((event.pos[1] - self.y) / (event.pos[0] - 20))
             else:
                 self.an = 0
@@ -206,6 +229,9 @@ class Gun:
             self.color = GREY
 
     def draw(self):
+        '''
+        draws a gun
+        '''
         if self.f2_on:
             pygame.draw.line(screen, YELLOW, (20, self.y), (20+1*(self.f2_power+20)*math.cos(self.an), self.y+1*(self.f2_power+20)*math.sin(self.an)), 10)
         else:
@@ -213,6 +239,10 @@ class Gun:
         # FIXIT don't know how to do it
 
     def gunmovement(self):
+        '''
+        moves a gun if you push w or s keys
+        :return:
+        '''
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
             if self.y >= 100:
@@ -227,6 +257,7 @@ class Gun:
             self.bullet_type = projectiles[0]
         elif keys[pygame.K_2]:
             self.bullet_type = projectiles[1]
+
     def power_up(self):
         if self.f2_on:
             if self.f2_power < 100:
@@ -257,6 +288,9 @@ class Target:
         self.points += points
 
     def move(self):
+        '''
+        moves a target, but only horizontally
+        '''
         if self.y >= 500 - self.r:
             self.vy = -self.vy
             self.y = 500 - self.r
@@ -266,6 +300,9 @@ class Target:
         self.y -= self.vy
 
     def draw(self):
+        '''
+        draws a target
+        '''
         pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.r)
         pygame.draw.circle(self.screen, BLACK, (self.x, self.y), self.r+2, 2)
 
