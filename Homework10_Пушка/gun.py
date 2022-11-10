@@ -243,3 +243,4 @@ while not finished:
 pygame.quit()
 
 print(counter.getter())
+
