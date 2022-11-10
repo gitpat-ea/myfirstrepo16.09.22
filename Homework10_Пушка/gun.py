@@ -20,21 +20,24 @@ GAME_COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 WIDTH = 900
 HEIGHT = 700
 
+
 class Gravity:
     def __init__(self, fall_axeleration):
         self.fall_axeleration = fall_axeleration
+
     def returner(self):
         return self.fall_axeleration
 
+
 g = Gravity(1)
 
-def distance(a1, a2):
-    '''
 
+def distance(a1, a2):
+    """
     :param a1: coordinates of first dot
     :param a2: coordinates of second dot
     :return: distance between two dots
-    '''
+    """
     x1, y1 = a1
     x2, y2 = a2
     return((x1-x2)**2+(y1-y2)**2)**0.5
@@ -47,8 +50,10 @@ class Counter:
     def penetration(self, ball, obj):
         if ball.hittest(obj):
             self.__count += 1
+
     def getter(self):
         return self.__count
+
 
 class Ball:
     def __init__(self, screen: pygame.Surface, x=40, y=450, gravity=-1):
@@ -95,10 +100,10 @@ class Ball:
             self.gravity = 0
             self.vy = 0
             self.y = 600 - self.r
-        if self.y >= 600 -self.r:
+        if self.y >= 600 - self.r:
             self.vx = self.vx*0.8
         if abs(self.vy) < 1:
-            self.live -=1
+            self.live -= 1
 
     def draw(self):
         pygame.draw.circle(
@@ -162,11 +167,10 @@ class Gun:
 
     def draw(self):
         if self.f2_on:
-            pygame.draw.line(screen, YELLOW, (40, 450), (50+1*self.f2_power*math.cos(self.an), 460+1*self.f2_power*math.sin(self.an)), 10)
+            pygame.draw.line(screen, YELLOW, (20, 450), (30+1*self.f2_power*math.cos(self.an), 460+1*self.f2_power*math.sin(self.an)), 10)
         else:
-            pygame.draw.line(screen, GREY, (40, 450), (50+10*math.cos(self.an), 450+10*math.sin(self.an)), 10)
+            pygame.draw.line(screen, GREY, (20, 450), (30+10*math.cos(self.an), 450+10*math.sin(self.an)), 10)
         # FIXIT don't know how to do it
-
 
     def power_up(self):
         if self.f2_on:
@@ -243,4 +247,3 @@ while not finished:
 pygame.quit()
 
 print(counter.getter())
-
