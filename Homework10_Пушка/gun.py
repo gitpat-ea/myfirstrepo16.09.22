@@ -52,6 +52,7 @@ class Counter:
             self.__count += 1
 
     def getter(self):
+        print("Che, interesno, skol'ko ballov???", "Malo, loh", sep = '\n')
         return self.__count
 
 
@@ -112,6 +113,8 @@ class Ball:
             (self.x, self.y),
             self.r
         )
+    def ball_killer(self):
+        self.live = -1
 
     def hittest(self, obj):
         """Функция проверяет сталкивалкивается ли данный обьект с целью, описываемой в обьекте obj.
@@ -186,6 +189,7 @@ class Target:
         self.screen = screen
         self.points = 0
         self.live = 1
+        self.vy = randint(-20, 20)
         # FIXME: don't work!!! How to call this functions when object is created?
         self.new_target()
 
@@ -199,6 +203,15 @@ class Target:
     def hit(self, points=1):
         """Попадание шарика в цель."""
         self.points += points
+
+    def move(self):
+        if self.y >= 500 - self.r:
+            self.vy = -self.vy
+            self.y = 500 - self.r
+        if self.y <= self.r:
+            self.vy = -self.vy
+            self.y = self.r
+        self.y -= self.vy
 
     def draw(self):
         pygame.draw.circle(self.screen, self.color, (self.x, self.y), self.r)
@@ -242,6 +255,8 @@ while not finished:
             counter.penetration(b, target)
             target.hit()
             target.new_target()
+            b.ball_killer()
+    target.move()
     gun.power_up()
 
 pygame.quit()
