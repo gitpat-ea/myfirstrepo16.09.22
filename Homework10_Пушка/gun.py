@@ -66,7 +66,7 @@ class Counter:
 
 
 class Ball:
-    def __init__(self, screen: pygame.Surface, x=40, y=450, gravity=-1):
+    def __init__(self, screen: pygame.Surface, x=20, y=450, gravity=-1):
         """ Конструктор класса ball
 
         Args:
@@ -154,6 +154,7 @@ class Face(Ball):
     same as ball, but cutter
     '''
     def draw(self):
+        self.r = 50
         circle(screen, (255, 255, 0), (self.x, self.y), self.r)
         circle(screen, (0, 0, 0), (self.x - 0.5 * self.r, self.y - 0.3 * self.r), 0.3 * self.r)
         circle(screen, (0, 0, 0), (self.x + 0.5 * self.r, self.y - 0.3 * self.r), 0.3 * self.r)
@@ -161,7 +162,7 @@ class Face(Ball):
         circle(screen, (255, 255, 255), (self.x + 0.42 * self.r, self.y - 0.38 * self.r), 0.15 * self.r)
 
         def elbow(elbowx, elbowy, deltax, deltay):
-            line(screen, (0, 0, 0), (elbowx, elbowy), (elbowx + deltax, elbowy + deltay), 1)
+            line(screen, (0, 0, 0), (elbowx, elbowy), (elbowx + deltax, elbowy + deltay), 3)
 
         elbow(self.x - self.r, self.y - 0.3 * self.r, 0.5 * self.r, -0.5 * self.r)
         elbow(self.x + self.r, self.y - 0.3 * self.r, -0.5 * self.r, -0.5 * self.r)
@@ -169,7 +170,7 @@ class Face(Ball):
         rect(screen, (255, 200, 200), (self.x - 0.7 * self.r, self.y + 0.15 * self.r, 0.4 * self.r, 0.2 * self.r))
         rect(screen, (255, 200, 200), (self.x + 0.3 * self.r, self.y + 0.15 * self.r, 0.4 * self.r, 0.2 * self.r))
 
-        arc(screen, (0, 0, 0), (self.x - 0.6 * self.r, self.y + 0.5 * self.r, self.r, 0.5 * self.r), 0.7, 2.3, 10)
+        arc(screen, (0, 0, 0), (self.x - 0.6 * self.r, self.y + 0.5 * self.r, self.r, 0.5 * self.r), 0.7, 2.3, 1)
 
 
 class Gun:
@@ -359,3 +360,5 @@ while not finished:
 pygame.quit()
 
 print(counter.getter())
+# А ещё ожидание на использование Мега снаряда
+# Можно добавить выведение счета и типа снаряда на экран
