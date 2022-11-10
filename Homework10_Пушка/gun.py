@@ -167,9 +167,9 @@ class Gun:
 
     def draw(self):
         if self.f2_on:
-            pygame.draw.line(screen, YELLOW, (20, 450), (30+1*self.f2_power*math.cos(self.an), 460+1*self.f2_power*math.sin(self.an)), 10)
+            pygame.draw.line(screen, YELLOW, (20, 450), (20+1*(self.f2_power+20)*math.cos(self.an), 450+1*(self.f2_power+20)*math.sin(self.an)), 10)
         else:
-            pygame.draw.line(screen, GREY, (20, 450), (30+10*math.cos(self.an), 450+10*math.sin(self.an)), 10)
+            pygame.draw.line(screen, GREY, (20, 450), (20+30*math.cos(self.an), 450+30*math.sin(self.an)), 10)
         # FIXIT don't know how to do it
 
     def power_up(self):
