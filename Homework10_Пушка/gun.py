@@ -2,7 +2,7 @@ import math
 from random import choice, randint
 
 import pygame
-
+from pygame.draw import circle, rect, arc, line
 
 FPS = 30
 
@@ -19,6 +19,8 @@ GAME_COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 
 WIDTH = 900
 HEIGHT = 700
+ball = 0
+face = 1
 
 
 class Gravity:
@@ -130,6 +132,25 @@ class Ball:
         # FIXME
             return False
 
+class Face(Ball):
+    def draw(self):
+        circle(screen, (255, 255, 0), (self.x, self.y), self.r)
+        circle(screen, (0, 0, 0), (self.x - 0.5 * self.r, self.y - 0.3 * self.r), 0.3 * self.r)
+        circle(screen, (0, 0, 0), (self.x + 0.5 * self.r, self.y - 0.3 * self.r), 0.3 * self.r)
+        circle(screen, (255, 255, 255), (self.x - 0.58 * self.r, self.y - 0.38 * self.r), 0.15 * self.r)
+        circle(screen, (255, 255, 255), (self.x + 0.42 * self.r, self.y - 0.38 * self.r), 0.15 * self.r)
+
+        def elbow(elbowx, elbowy, deltax, deltay):
+            line(screen, (0, 0, 0), (elbowx, elbowy), (elbowx + deltax, elbowy + deltay), 10)
+
+        elbow(self.x - self.r, self.y - 0.3 * self.r, 0.5 * self.r, -0.5 * self.r)
+        elbow(self.x + self.r, self.y - 0.3 * self.r, -0.5 * self.r, -0.5 * self.r)
+
+        rect(screen, (255, 200, 200), (self.x - 0.7 * self.r, self.y + 0.15 * self.r, 0.4 * self.r, 0.2 * self.r))
+        rect(screen, (255, 200, 200), (self.x + 0.3 * self.r, self.y + 0.15 * self.r, 0.4 * self.r, 0.2 * self.r))
+
+        arc(screen, (0, 0, 0), (self.x - 0.6 * self.r, self.y + 0.5 * self.r, self.r, 0.5 * self.r), 0.7, 2.3, 10)
+
 
 class Gun:
     def __init__(self, screen):
@@ -138,6 +159,7 @@ class Gun:
         self.f2_on = 0
         self.an = 1
         self.color = GREY
+        self.bullet_type = face
         self.y = 450
 
     def fire2_start(self, event):
@@ -149,16 +171,27 @@ class Gun:
         Происходит при отпускании кнопки мыши.
         Начальные значения компонент скорости мяча vx и vy зависят от положения мыши.
         """
-        global balls, bullet
-        bullet += 1
-        new_ball = Ball(self.screen, y=self.y)
-        new_ball.r += 5
-        self.an = math.atan2((event.pos[1]-new_ball.y), (event.pos[0]-new_ball.x))
-        new_ball.vx = self.f2_power * math.cos(self.an)
-        new_ball.vy = - self.f2_power * math.sin(self.an)
-        balls.append(new_ball)
-        self.f2_on = 0
-        self.f2_power = 10
+        global projectile, bullet
+        if self.bullet_type == ball:
+            bullet += 1
+            new_ball = Ball(self.screen, y=self.y)
+            new_ball.r += 5
+            self.an = math.atan2((event.pos[1]-new_ball.y), (event.pos[0]-new_ball.x))
+            new_ball.vx = self.f2_power * math.cos(self.an)
+            new_ball.vy = - self.f2_power * math.sin(self.an)
+            projectile.append(new_ball)
+            self.f2_on = 0
+            self.f2_power = 10
+        elif self.bullet_type == face:
+            bullet += 1
+            new_ball = Face(self.screen, y=self.y)
+            new_ball.r += 5
+            self.an = math.atan2((event.pos[1] - new_ball.y), (event.pos[0] - new_ball.x))
+            new_ball.vx = self.f2_power * math.cos(self.an)
+            new_ball.vy = - self.f2_power * math.sin(self.an)
+            projectile.append(new_ball)
+            self.f2_on = 0
+            self.f2_power = 10
 
     def targetting(self, event):
         """Прицеливание. Зависит от положения мыши."""
@@ -187,6 +220,8 @@ class Gun:
         elif keys[pygame.K_DOWN]:
             if self.y <= 500:
                 self.y += 3
+
+
 
     def power_up(self):
         if self.f2_on:
@@ -234,7 +269,7 @@ class Target:
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 bullet = 0
-balls = []
+projectile = []
 
 clock = pygame.time.Clock()
 gun = Gun(screen)
@@ -250,7 +285,7 @@ while not finished:
     gun.gunmovement()
     for target in Targets:
         target.draw()
-    for b in balls:
+    for b in projectile:
         if b.live > 0:
             b.draw()
     pygame.display.update()
@@ -266,7 +301,7 @@ while not finished:
         elif event.type == pygame.MOUSEMOTION:
             gun.targetting(event)
 
-    for b in balls:
+    for b in projectile:
         if b.live > 0:
             b.move()
             for target in Targets:
