@@ -138,6 +138,7 @@ class Gun:
         self.f2_on = 0
         self.an = 1
         self.color = GREY
+        self.y = 450
 
     def fire2_start(self, event):
         self.f2_on = 1
@@ -150,7 +151,7 @@ class Gun:
         """
         global balls, bullet
         bullet += 1
-        new_ball = Ball(self.screen)
+        new_ball = Ball(self.screen, y=self.y)
         new_ball.r += 5
         self.an = math.atan2((event.pos[1]-new_ball.y), (event.pos[0]-new_ball.x))
         new_ball.vx = self.f2_power * math.cos(self.an)
@@ -162,7 +163,10 @@ class Gun:
     def targetting(self, event):
         """Прицеливание. Зависит от положения мыши."""
         if event:
-            self.an = math.atan((event.pos[1]-450) / (event.pos[0]-20))
+            if event.pos[0]-20 !=0:
+                self.an = math.atan((event.pos[1] - self.y) / (event.pos[0] - 20))
+            else:
+                self.an = 0
         if self.f2_on:
             self.color = RED
         else:
@@ -170,10 +174,19 @@ class Gun:
 
     def draw(self):
         if self.f2_on:
-            pygame.draw.line(screen, YELLOW, (20, 450), (20+1*(self.f2_power+20)*math.cos(self.an), 450+1*(self.f2_power+20)*math.sin(self.an)), 10)
+            pygame.draw.line(screen, YELLOW, (20, self.y), (20+1*(self.f2_power+20)*math.cos(self.an), self.y+1*(self.f2_power+20)*math.sin(self.an)), 10)
         else:
-            pygame.draw.line(screen, GREY, (20, 450), (20+30*math.cos(self.an), 450+30*math.sin(self.an)), 10)
+            pygame.draw.line(screen, GREY, (20, self.y), (20+30*math.cos(self.an), self.y+30*math.sin(self.an)), 10)
         # FIXIT don't know how to do it
+
+    def gunmovement(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP]:
+            if self.y >= 100:
+                self.y -= 3
+        elif keys[pygame.K_DOWN]:
+            if self.y <= 500:
+                self.y +=3
 
     def power_up(self):
         if self.f2_on:
@@ -232,6 +245,7 @@ finished = False
 while not finished:
     screen.fill(WHITE)
     gun.draw()
+    gun.gunmovement()
     target.draw()
     for b in balls:
         if b.live > 0:
@@ -250,12 +264,13 @@ while not finished:
             gun.targetting(event)
 
     for b in balls:
-        b.move()
-        if b.hittest(target):
-            counter.penetration(b, target)
-            target.hit()
-            target.new_target()
-            b.ball_killer()
+        if b.live > 0:
+            b.move()
+            if b.hittest(target):
+                counter.penetration(b, target)
+                target.hit()
+                target.new_target()
+                b.ball_killer()
     target.move()
     gun.power_up()
 
